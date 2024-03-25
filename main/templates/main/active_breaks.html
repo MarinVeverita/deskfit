@@ -1,0 +1,210 @@
+{% extends "main/layout.html" %}
+
+{% block body %}
+
+<div class="settings-container" id="settings" onclick="event.stopPropagation()">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin: 0 auto; color: #666;">Settings</h2>
+        <button class="btn" id="x_btn" onclick="closeSettings()">
+            <span id="x_span" class="material-icons">close</span>
+        </button>
+    </div>
+    
+    <hr>
+        <div class="form-group">
+            
+            <input type="hidden" id="username" name="username" value="{{ user.username }}">
+
+            <label for="workInput" class="form-label">Work Time</label>
+            <input type="number" class="form-control" id="workInput" min="0" max="999">
+
+            <label for="breakInput" class="form-label">Break Time</label>
+            <input type="number" class="form-control" id="breakInput" min="0" max="999">
+           
+
+            <span id="auto_start_work_label">Auto Start Work</span>
+            <label class="switch">
+                <input id="auto_start_work_input" type="checkbox" checked>
+                <span class="slider round"></span>
+              </label>
+
+              <span id="auto_start_break_label">Auto Start Break</span>
+              <label class="switch">
+                <input id="auto_start_break_input" type="checkbox" checked>
+                <span class="slider round"></span>
+              </label>
+        </div>
+    
+    <button onclick="closeSettings()">Close</button>
+</div>
+
+
+
+
+<div id="container">
+    
+
+    <div class="timer">
+        <button class="timer__btn--work btn btn-dark">Work Time</button>
+        <button class="timer__btn--break btn btn-dark">Break Time</button>
+        <span class="timer__part timer__part--minutes">00</span>
+        <span class="timer__part">:</span>
+        <span class="timer__part timer__part--seconds">00</span>
+        <button id="btn_start" type="button" class="timer__btn--control timer__btn--start btn"> START </button>
+    </div>
+
+    <button class="btn" id="settings_btn" onclick="event.stopPropagation()">
+        <span class="material-icons">settings</span>
+    </button>
+    
+</div>
+
+<script>
+    let timer;
+    $(document).ready(function() {
+        timer = new Timer($(".timer"));
+
+        $("body").click(closeSettingsIfClickedOutside)
+        $("#settings_btn").click(toggleSettings)
+
+        $('#btn_start').click(function() {
+            $(this).toggleClass('active');
+        });
+
+    
+        let isSpaceKeyPressed = false;
+
+        $(document).on('keydown', (event) => {
+            if (event.code === 'Space' && !isSpaceKeyPressed) {
+                if ($(document.activeElement).is('button')) {
+                    event.preventDefault();
+                }
+                
+                timer.control();
+
+                isSpaceKeyPressed = true;
+            }
+        });
+
+        $(document).on('keyup', (event) => {
+            if (event.code === 'Space') {
+                isSpaceKeyPressed = false;
+            }
+        });
+
+
+    });
+    
+
+    function condition() {
+        return $("#workInput").val() >= 0.05 && $("#breakInput").val() >= 0.05;
+    }
+
+    function toggleSettings(event) {
+        var settings = $("#settings");
+        if (settings.is(":visible")) {
+            closeSettings()
+        } else {
+            $('body > *').not('#settings *').css('filter', 'blur(5px)');
+            $('.main_container > *').not('#settings *').css('filter', 'blur(5px)');
+
+            $('.main_container').css('filter', 'none');
+            $('#settings').css('filter', 'none');
+
+            const storedSettings = JSON.parse(sessionStorage.getItem('activeBreaksSettings'));
+            
+            let workTime = storedSettings[0].work_duration;
+            let breakTime = storedSettings[0].break_duration;
+            let auto_start_work = storedSettings[0].auto_start_work_timer;
+            let auto_start_break = storedSettings[0].auto_start_break_timer;
+
+            $("#workInput").val(workTime)
+            $("#breakInput").val(breakTime)
+            $("#auto_start_work_input").prop('checked', auto_start_work);
+            $("#auto_start_break_input").prop('checked', auto_start_break);
+            settings.show(); 
+        }
+    }
+
+
+    
+function closeSettings() {
+    if (condition()) {
+        var settings = $("#settings");
+        $("body > *").css('filter', 'none');
+        $('.main_container > *').not('#settings *').css('filter', 'none');
+        settings.hide();
+
+        let workTime = parseFloat($("#workInput").val())
+        let breakTime = parseFloat($("#breakInput").val())
+        let auto_start_work = $("#auto_start_work_input").prop('checked');
+        let auto_start_break = $("#auto_start_break_input").prop('checked');
+
+        let activeBreaksSettings = JSON.parse(sessionStorage.getItem('activeBreaksSettings'));
+        activeBreaksSettings[0].work_duration = workTime;
+        activeBreaksSettings[0].break_duration = breakTime;
+        activeBreaksSettings[0].auto_start_work_timer= auto_start_work;
+        activeBreaksSettings[0].auto_start_break_timer= auto_start_break;
+
+        sessionStorage.setItem('activeBreaksSettings', JSON.stringify(activeBreaksSettings));
+
+        updateActiveBreaksSettings(activeBreaksSettings);
+
+        timer.updateTime_afterSettings(activeBreaksSettings)
+    }
+}
+
+
+function closeSettingsIfClickedOutside(event) {
+    var settings = $("#settings");
+    var settings_btn = $("#settings_btn");
+
+    if (settings.is(":visible")) {
+        if (condition()) {
+            if (!settings.is(event.target) && !settings_btn.is(event.target)) {
+                closeSettings()
+            }
+        }
+    }
+}
+
+
+
+function updateActiveBreaksSettings(data) {
+    const csrfToken = getCSRFToken();
+    const username = $("#username").val();
+    const url = '/updateActiveBreaksSettings';
+    const method = 'POST';
+    const headers = {
+        'X-CSRFToken': csrfToken,
+        'Content-Type': 'application/json'
+    };
+
+    const body = JSON.stringify({
+        username: username,
+        settings: data
+    });
+
+    fetch(url, {
+        method: method,
+        headers: headers,
+        body: body
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+    
+</script>
+
+{% endblock %}

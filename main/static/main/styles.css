@@ -55,6 +55,7 @@ body {
 
 
 
+
 .settings-container {
   width: 35%;
   position: fixed;
@@ -218,7 +219,8 @@ padding: 0;
   flex-grow: 1;
 }
 
-#add {
+#add_workout_btn {
+  text-decoration: none;
   display: inline-flex;
   align-items: center; 
   justify-content: center;
@@ -229,7 +231,33 @@ padding: 0;
   border-radius: 5px;
   cursor: pointer;
 }
+#add_workout_btn:hover {
+  filter: brightness(90%);
+}
 
 .remove-workout {
 padding: auto 5px;
 }
+
+
+.list-group-item.workout {
+  display: flex;
+  flex-direction: row; /* Cambia in row per allineare gli elementi sulla stessa riga */
+  align-items: center; /* Allinea gli elementi verticalmente al centro */
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+}
+
+.workout-name {
+  font-weight: bold;
+  margin-right: 20px; /* Spazio tra il nome del workout e gli altri elementi */
+}
+
+.workout-muscle-groups,
+.workout-difficulty {
+  color: #555;
+  margin: 0 10px; /* Spazio tra gli elementi sulla stessa riga */
+}
+

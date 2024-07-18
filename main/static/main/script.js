@@ -164,9 +164,13 @@ function playAudio() {
 
 
 function getCSRFToken() {
-    const cookieValue = document.cookie
-        .split('; ')
-        .find(cookie => cookie.startsWith('csrftoken='))
-        .split('=')[1];
-    return cookieValue;
+    const name = 'csrftoken=';
+    const cookies = document.cookie.split('; ');
+
+    for (let cookie of cookies) {
+        if (cookie.startsWith(name)) {
+            return cookie.substring(name.length);
+        }
+    }
+    return null;
 }

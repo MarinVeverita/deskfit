@@ -1,0 +1,104 @@
+{% extends "main/layout.html" %}
+
+{% block body %}
+<h1 id="message"></h1>
+
+<div id="exercises"></div>
+
+<div id="timer-container">
+    <h2 id="timer-title"></h2>
+    <div id="timer"></div>
+    <button id="start-timer" style="display: none;">Start</button>
+</div>
+
+<script>
+    $(document).ready(() => {
+        const today = new Date();
+        const dayOfWeekNumber = today.getDay();  // (0-6)
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayOfWeekString = daysOfWeek[dayOfWeekNumber];
+
+        $.ajax({
+            url: '/planned_workouts/week-plan',
+            type: 'GET',
+            success: function(data) {
+                console.log(data)
+                const workoutOfTheDay = data[dayOfWeekString];
+                if (workoutOfTheDay) {
+                    $("#message").text(`Today's workout is: ${workoutOfTheDay.name}`);
+                    displayExercises(workoutOfTheDay.exercises);
+                } else {
+                    $("#message").text(`Today is a rest day.`);
+                }
+            },
+            error: function(error) {
+                console.error('Error:', error);
+                $("#message").text(`Error fetching today's workout.`);
+            }
+        });
+
+        function displayExercises(exercises) {
+            const exercisesContainer = $("#exercises");
+            exercisesContainer.empty();
+            exercises.forEach((exercise, index) => {
+                console.log(exercise)
+                const exerciseElement = `
+                    <div class="exercise">
+                        <h3>${exercise.exercise.name}</h3>
+                        <p>${exercise.exercise.instructions}</p>
+                        <p>Reps: ${exercise.repetitions}</p>
+                        <p>Rest: ${exercise.rest_time} seconds</p>
+                    </div>
+                `;
+                exercisesContainer.append(exerciseElement);
+            });
+
+            if (exercises.length > 0) {
+                $("#start-timer").show().off('click').on('click', function() {
+                    startTimer(exercises);
+                });
+            }
+        }
+
+        function startTimer(exercises) {
+            let currentExerciseIndex = 0;
+
+            function startExerciseTimer(duration, name, callback) {
+                let timer = duration, minutes, seconds;
+                $("#timer-title").text(name);
+                const interval = setInterval(function () {
+                    minutes = parseInt(timer / 60, 10);
+                    seconds = parseInt(timer % 60, 10);
+
+                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                    seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                    $("#timer").text(minutes + ":" + seconds);
+
+                    if (--timer < 0) {
+                        clearInterval(interval);
+                        callback();
+                    }
+                }, 1000);
+            }
+
+            function nextExercise() {
+                if (currentExerciseIndex < exercises.length) {
+                    const currentExercise = exercises[currentExerciseIndex];
+                    startExerciseTimer(currentExercise.repetitions, `Exercise: ${currentExercise.exercise.name}`, function() {
+                        startExerciseTimer(currentExercise.rest_time, `Rest for: ${currentExercise.exercise.name}`, function() {
+                            currentExerciseIndex++;
+                            nextExercise();
+                        });
+                    });
+                } else {
+                    $("#timer-title").text("Workout Complete!");
+                    $("#timer").text("");
+                }
+            }
+
+            nextExercise();
+        }
+    });
+</script>
+{% endblock %}

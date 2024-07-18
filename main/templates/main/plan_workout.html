@@ -3,12 +3,8 @@
 
 {% block body %}
 
-
 <h1>Plan Workout</h1>
 	
-
-
-
 
 <h1>Shedule</h1>
 
@@ -34,25 +30,91 @@
 	<h3>Sunday</h3>
 </div>
 
+<h5><p class="text-secondary">An empty slot means it's time to recharge with a rest day!</p></h5>
+
+
 <div id="container">
 	<h1>Workouts</h1>
-	<button class="btn" id="add">
-		<span class="material-icons">
-			add_circle
-			</span>
-			Add new workout
-	</button>
+	<a class="btn-link" id="add_workout_btn" href="{% url 'create_workout' %}"><span class="material-icons">
+		add_circle
+		</span>Add new workout</a>
 </div>
 
 <div class="list-group" id="example2Left">
-	<div class="list-group-item">Workout 1</div>
-	<div class="list-group-item">Workout 2</div>
-	<div class="list-group-item">Workout 3</div>
+	
 </div>
 	
 <script>
   $(document).ready(() => {
     $.getScript("{% static 'index-bundle.js' %}");
+
+    let difficulty_map = {
+        'beginner': 1,
+        'intermediate': 2,
+        'expert': 3
+    };
+
+
+
+
+
+	$.ajax({
+    url: '/workouts/',
+    type: 'GET',
+    
+    success: function(data) {
+        console.log('Success:', data);
+		data.forEach(element => {
+      let exercises = element.exercises
+
+      
+      let difficulty_sum = 0;
+
+      let muscle_groups = [];
+
+      exercises.forEach(exercise_workout => {
+        difficulty_sum += difficulty_map[exercise_workout.exercise.difficulty] 
+        
+        if (!muscle_groups.includes(exercise_workout.exercise.muscle)) {
+          muscle_groups.push(exercise_workout.exercise.muscle);
+        }
+      });
+
+      let difficulty_avg_number = difficulty_sum / exercises.length
+
+      let difficulty_avg;
+      if (difficulty_avg_number < 1.5) {
+        difficulty_avg = 'beginner';
+      } else if (difficulty_avg_number <2.5) {
+        difficulty_avg = 'intermediate';
+      } else {
+        difficulty_avg = 'expert'
+      }
+
+
+      
+
+
+
+
+			
+			let workout_element = `
+            <div class="list-group-item workout" data-id="workout_${element.id}">
+              <h4 class="workout-name">${element.name}</h4>
+              <p class="workout-muscle-groups">Muscle Groups: ${muscle_groups.join(', ')}</p>
+              <p class="workout-difficulty">Difficulty: ${difficulty_avg}</p>
+            </div>
+          `;
+			
+			$("#example2Left").append(workout_element);
+			
+		});
+    },
+    error: function(error) {
+        console.error('Error:', error);
+    }
+});
+
   })
 </script>
 

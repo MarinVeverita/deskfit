@@ -1,0 +1,210 @@
+{% extends "main/layout.html" %}
+
+{% block body %}
+
+<h1>Create the workout!</h1>
+
+<div id="muscle_group_selection">
+    <form id="muscleGroupsForm">
+        <label for="title">Title:</label>
+        <input required type="text" id="title">
+    <hr>
+    <h3>Scegli i gruppi muscolari</h3>
+        <label><input type="checkbox" name="muscleGroup" value="abdominals"> Abdominals</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="abductors"> Abductors</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="adductors"> Adductors</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="biceps"> Biceps</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="calves"> Calves</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="chest"> Chest</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="forearms"> Forearms</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="glutes"> Glutes</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="hamstrings"> Hamstrings</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="lats"> Lats</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="lower_back"> Lower Back</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="middle_back"> Middle Back</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="neck"> Neck</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="quadriceps"> Quadriceps</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="traps"> Traps</label><br>
+        <label><input type="checkbox" name="muscleGroup" value="triceps"> Triceps</label><br>
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+<div id="output">
+    <div id="output-exercises"></div>
+</div>
+
+
+
+<script>
+    let all_exercises = [];
+
+$(document).ready(function() {
+    $("#muscleGroupsForm").submit(function(event) {
+        event.preventDefault();
+
+        let workout_name = $("#title").val();
+        
+        var selectedMuscleGroups = [];
+        $("input[name='muscleGroup']:checked").each(function() {
+            selectedMuscleGroups.push($(this).val());
+        });
+
+        $.ajax({
+            url: "/api/get-exercises/",
+            type: "GET",
+            contentType: "application/json",
+            data: { 'muscleGroups[]': selectedMuscleGroups },
+            success: function(data) {
+                $("#muscleGroupsForm").hide();
+
+                let outputDiv = $("#output");
+                let outputDiv_exercises = $("#output-exercises")
+                
+                data.exercises.forEach(exercise => {
+                    all_exercises.push(exercise);
+
+                    let exerciseElement = `
+                        <div class="exercise-item">
+                            <label>
+                                <input type="checkbox" class="exercise-checkbox" value="${exercise.name}">
+                                <strong>${exercise.name}</strong> (${exercise.muscle}-${exercise.difficulty}) 
+                                <p>${exercise.instructions}</p>
+                            </label>
+                            <div class="exercise-details" style="display:none;">
+                                <label>Sets: <input type="number" class="sets" min="1" value="3"></label>
+                                <label>Reps: <input type="number" class="reps" min="1" value="10"></label>
+                                <label>Work Time (s): <input type="number" class="work-time" min="1" value="30"></label>
+                                <label>Rest Time (s): <input type="number" class="rest-time" min="1" value="30"></label>
+                            </div>
+                        </div>
+                    `;
+                    outputDiv_exercises.append(exerciseElement);
+                });
+
+                let searchForm = `
+                    <div id="searchForm">
+                        <h4>Can't you find an exercise? Search for it by name</h4>
+                        <input type="text" id="exerciseSearchName" placeholder="Exercise name">
+                        <button id="searchExerciseButton" class="btn btn-secondary">Search</button>
+                    </div>
+                `;
+                outputDiv.append(searchForm);
+
+                let submitButton = `
+                    <button id="submitExercisesButton" class="btn btn-primary">Submit Exercises</button>
+                `;
+                outputDiv.append(submitButton);
+
+                $("#searchExerciseButton").click((event) => {
+                    event.preventDefault();
+
+                    let searchName = $("#exerciseSearchName").val();
+
+                    $.ajax({
+                        url: "/api/search-exercise/",
+                        type: "GET",
+                        contentType: "application/json",
+                        data: { 'name': searchName },
+                        success: function(data) {
+                            $("#exerciseSearchName").val("");
+                            let exercises_title = `
+                                <div class="exercises-title">
+                                    <h3>Exercises for the search: ${searchName}</h3>
+                                </div>`;
+                            outputDiv_exercises.append(exercises_title);
+                            data.exercises.forEach(exercise => {
+                                all_exercises.push(exercise);
+                                let exerciseElement = `
+                                    <div class="exercise-item">
+                                        <label>
+                                            <input type="checkbox" class="exercise-checkbox" value="${exercise.name}">
+                                            <strong>${exercise.name}</strong> (${exercise.muscle})
+                                            <p>${exercise.instructions}</p>
+                                        </label>
+                                        <div class="exercise-details" style="display:none;">
+                                            <label>Sets: <input type="number" class="sets" min="1" value="3"></label>
+                                            <label>Reps: <input type="number" class="reps" min="1" value="10"></label>
+                                            <label>Work Time (s): <input type="number" class="work-time" min="1" value="30"></label>
+                                            <label>Rest Time (s): <input type="number" class="rest-time" min="1" value="30"></label>
+                                        </div>
+                                    </div>
+                                `;
+                                outputDiv_exercises.append(exerciseElement);
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Errore durante la ricerca dell'esercizio:", error);
+                        }
+                    });
+                });
+
+                $(document).on('change', '.exercise-checkbox', function() {
+                    $(this).closest('.exercise-item').find('.exercise-details').toggle(this.checked);
+                });
+
+                $("#submitExercisesButton").click(function(event) {
+                    event.preventDefault();
+                    
+                    var selectedExercises = [];
+                    $(".exercise-checkbox:checked").each(function() {
+                        let exerciseItem = $(this).closest('.exercise-item');
+                        let exerciseDetails = exerciseItem.find('.exercise-details');
+                        let details;
+                        for (let i = 0; i < all_exercises.length; i++) {
+                            let exercise = all_exercises[i];
+                            console.log(exercise.name);
+                            console.log($(this).val());
+
+                            if (exercise.name == $(this).val()) {
+                                details = exercise;
+                                console.log('knnnnnnnnn')
+                                console.log(details)
+                                break;
+                        }
+                        
+                }
+                        
+                        selectedExercises.push({
+                            name: $(this).val(),
+                            sets: exerciseDetails.find('.sets').val(),
+                            reps: exerciseDetails.find('.reps').val(),
+                            work_time: exerciseDetails.find('.work-time').val(),
+                            rest_time: exerciseDetails.find('.rest-time').val(),
+                            details: details
+                        });
+                    });
+
+                    console.log("Selected Exercises: ", selectedExercises);
+
+                    const csrfToken = getCSRFToken();
+                    
+                    $.ajax({
+                        url: "/api/save-workout/",
+                        type: "POST",
+                        contentType: "application/json",
+                        headers: {'X-CSRFToken': csrfToken},
+                        data: JSON.stringify({ 
+                            workout_name: workout_name, 
+                            exercises: selectedExercises 
+                        }),
+                        success: function(response) {
+                            alert("Workout saved successfully!");
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Errore durante il salvataggio del workout:", error);
+                        }
+                    });
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Errore durante il recupero degli esercizi:", error);
+            }
+        });
+    });
+});
+
+
+    </script>
+
+{% endblock %}

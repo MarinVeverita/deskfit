@@ -1,0 +1,8 @@
+django
+djangorestframework
+python-dotenv
+django-crispy-forms
+crispy-bootstrap5
+
+#sortablejs
+#webpack

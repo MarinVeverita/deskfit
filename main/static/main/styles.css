@@ -1,48 +1,49 @@
+/* Imposta le immagini della logo responsive */
 .logo img {
-    width: 100px;
-    height: auto;
+  width: 100%;
+  height: auto;
+  max-width: 100px;
 }
 
 body {
-    background: #dddddd;
-    height: 100vh;
-    transition: filter 5s ease; 
-    margin: -7px;
-    overflow-x: hidden;
-  }
- 
-  
-  .timer {
-    font-family: sans-serif;
-    display: inline-block;
-    padding: 24px 32px;
-    border-radius: 30px;
-    background: white;
-  }
-  
-  .timer__part {
-    font-size: 36px;
-    font-weight: bold;
-  }
-  
-  .timer__btn {
-    width: 50px;
-    height: 50px;
-    margin-left: 16px;
-    border-radius: 50%;
-    border: none;
-    color: white;
-    background: #8208e6;
-    cursor: pointer;
-  }
-  
-  .timer__btn--start {
-    background: #00b84c;
-  }
-  
-  .timer__btn--stop {
-    background: #ff0256;
-  }
+  background: #dddddd;
+  min-height: 100vh;
+  transition: filter 5s ease; 
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.timer {
+  font-family: sans-serif;
+  display: inline-block;
+  padding: 1.5em 2em;
+  border-radius: 30px;
+  background: white;
+}
+
+.timer__part {
+  font-size: 2.25em;
+  font-weight: bold;
+}
+
+.timer__btn {
+  width: 3em;
+  height: 3em;
+  margin-left: 1em;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  background: #8208e6;
+  cursor: pointer;
+}
+
+.timer__btn--start {
+  background: #00b84c;
+}
+
+.timer__btn--stop {
+  background: #ff0256;
+}
 
 .btn:focus {
   box-shadow: none;
@@ -52,74 +53,68 @@ body {
   filter: blur(5px);
 }
 
-
-
-
-
 .settings-container {
-  width: 35%;
+  width: 90%;
+  max-width: 35%;
   position: fixed;
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
-  padding: 20px;
+  padding: 1.25em;
   border: 1px solid #ccc;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: none;
   z-index: 999;
 }
 
 #x_span {
-  font-size: xx-large;
- color: #666; 
+  font-size: 2em;
+  color: #666; 
 }
 #x_span:hover {
   color: black;
   cursor: pointer;
 }
 
-
 hr {
-  width: calc(100% + 40px);
+  width: calc(100% + 2.5em);
   border: 0.5px solid rgb(95, 95, 95);
-  margin-left: -20px;
+  margin-left: -1.25em;
 }
 
-
-
-#btn_start:hover {filter: brightness(90%);}
+#btn_start:hover {
+  filter: brightness(90%);
+}
 
 #btn_start {
   text-align: center;
-  height: 65px;
-  width: 185px;
+  height: 4.0625em;
+  width: 11.5625em;
   cursor: pointer;
-  font-size: 22px;
-  letter-spacing: 4px;
+  font-size: 1.375em;
+  letter-spacing: 0.25em;
   color: #F0F0F0;
   border-radius: 10px;
-  border-bottom: 4px solid #1f6d18;
-  box-shadow: 6px 6px 6px #999;
-  transition: all .1s linear;
+  border-bottom: 0.25em solid #1f6d18;
+  box-shadow: 0.375em 0.375em 0.375em #999;
+  transition: all 0.1s linear;
 }
 
 #btn_start.active {
-  box-shadow: 1px 1px 1px #777;
-  border-bottom: 1px solid #c0392b;
-  transform: translateY(4px);
+  box-shadow: 0.0625em 0.0625em 0.0625em #777;
+  border-bottom: 0.0625em solid #c0392b;
+  transform: translateY(0.25em);
 }
-
-
 
 .switch {
   position: relative;
   display: inline-block;
-  width: 60px;
-  height: 34px;
+  width: 3.75em;
+  height: 2.125em;
 }
 
-.switch input { 
+.switch input {
   opacity: 0;
   width: 0;
   height: 0;
@@ -133,20 +128,18 @@ hr {
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+  transition: 0.4s;
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
+  height: 1.625em;
+  width: 1.625em;
+  left: 0.25em;
+  bottom: 0.25em;
   background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+  transition: 0.4s;
 }
 
 input:checked + .slider {
@@ -154,40 +147,32 @@ input:checked + .slider {
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 0.0625em #2196F3;
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
+  transform: translateX(1.625em);
 }
 
-/* Rounded sliders */
 .slider.round {
-  border-radius: 34px;
+  border-radius: 2.125em;
 }
 
 .slider.round:before {
   border-radius: 50%;
 }
 
-
-
 .blue-background-class {
-	background-color: #C8EBFB;
+  background-color: #C8EBFB;
 }
-
 
 .day {
-  margin-bottom: 20px;
+  margin-bottom: 1.25em;
 }
-
-
 
 .day {
   background-color: peachpuff;
-  height: 60px;
+  height: 3.75em;
   border: 1px solid black;
   display: flex;
   flex-direction: row;
@@ -195,26 +180,23 @@ input:checked + .slider:before {
 }
 
 #container {
-display: flex;
+  display: flex;
   align-items: center;
 }
 #container h1 {
   margin-right: auto;
 }
 
-
 .day h3 {
-
   width: 20%;
 }
 
 .list-group-item {
-height: 50px;
+  height: 3.125em;
   cursor: grab;
   border: 1px solid #ccc;
-  margin: 5px;
-padding: 0;
-  
+  margin: 0.3125em;
+  padding: 0;
   background-color: #f9f9f9;
   flex-grow: 1;
 }
@@ -222,13 +204,13 @@ padding: 0;
 #add_workout_btn {
   text-decoration: none;
   display: inline-flex;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
-  padding: 10px 20px;
+  padding: 0.625em 1.25em;
   background-color: #4d4d4d;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 0.3125em;
   cursor: pointer;
 }
 #add_workout_btn:hover {
@@ -236,28 +218,49 @@ padding: 0;
 }
 
 .remove-workout {
-padding: auto 5px;
+  padding: auto 0.3125em;
 }
-
 
 .list-group-item.workout {
   display: flex;
-  flex-direction: row; /* Cambia in row per allineare gli elementi sulla stessa riga */
-  align-items: center; /* Allinea gli elementi verticalmente al centro */
-  padding: 10px;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.625em;
   border: 1px solid #ccc;
-  margin-bottom: 10px;
+  margin-bottom: 0.625em;
   background-color: #f9f9f9;
 }
 
 .workout-name {
   font-weight: bold;
-  margin-right: 20px; /* Spazio tra il nome del workout e gli altri elementi */
+  margin-right: 1.25em;
 }
 
 .workout-muscle-groups,
 .workout-difficulty {
   color: #555;
-  margin: 0 10px; /* Spazio tra gli elementi sulla stessa riga */
+  margin: 0 0.625em;
 }
 
+/* Media Queries per dispositivi mobili */
+@media (max-width: 768px) {
+  .settings-container {
+      width: 90%;
+      max-width: 90%;
+      padding: 1em;
+  }
+  #btn_start {
+      width: 100%;
+      font-size: 1em;
+  }
+  .timer {
+      padding: 1em;
+  }
+  .timer__part {
+      font-size: 1.5em;
+  }
+  .timer__btn {
+      width: 2.5em;
+      height: 2.5em;
+  }
+}

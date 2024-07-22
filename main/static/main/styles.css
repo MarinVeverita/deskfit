@@ -1,4 +1,3 @@
-/* Imposta le immagini della logo responsive */
 .logo img {
   width: 100%;
   height: auto;
@@ -172,12 +171,15 @@ input:checked + .slider:before {
 
 .day {
   background-color: peachpuff;
-  height: 3.75em;
   border: 1px solid black;
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding: 10px;
+  margin-bottom: 20px;
 }
+
+
 
 #container {
   display: flex;
@@ -242,7 +244,7 @@ input:checked + .slider:before {
   margin: 0 0.625em;
 }
 
-/* Media Queries per dispositivi mobili */
+/* Media Queries for mobile devices */
 @media (max-width: 768px) {
   .settings-container {
       width: 90%;
@@ -262,5 +264,10 @@ input:checked + .slider:before {
   .timer__btn {
       width: 2.5em;
       height: 2.5em;
+  }
+
+  .day {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

@@ -13,7 +13,7 @@ class Timer {
         this.w.postMessage({ action: 'firstUpdateTime'})
         this.w.onmessage = this.handleWorkerMessage.bind(this);
 
-        this.el.work.click(() => {
+        this.el.work.click(() => { 
             this.workTime()
         })
 

@@ -35,21 +35,23 @@ NINJA_API_KEY = os.environ.get('NINJA_API_KEY')
 def home(request):
     return render(request, "main/home.html")
 
-
+@login_required
 def active_breaks(request):
     return render(request, "main/active_breaks.html")
 
-
+@login_required
 def plan_workout(request):
     return render(request, "main/plan_workout.html")
 
+@login_required
 def workout_of_the_day(request):
     return render(request, "main/workout_of_the_day.html")
 
+@login_required
 def create_workout(request):
     return render(request, "main/create_workout.html")
 
-
+@login_required
 def get_exercises(request):
      if request.method == 'GET':
         muscles = request.GET.getlist('muscleGroups[]')
@@ -68,7 +70,7 @@ def get_exercises(request):
         
         return JsonResponse({'exercises': exercises})
 
-
+@login_required
 def search_exercise(request):
     if request.method == 'GET':
         name = request.GET['name']
@@ -196,7 +198,7 @@ def save_workout(request):
                 rest_time=rest_time
             )
 
-        return JsonResponse({"message": "Workout saved successfully."}, status=200)
+        return redirect('plan_workout')
     
     except json.JSONDecodeError as e:
         print("JSON Decode Error:", str(e))
@@ -204,6 +206,7 @@ def save_workout(request):
     except Exception as e:
         print("General Error:", str(e))  # Log the error message
         return JsonResponse({"error": str(e)}, status=500)
+
 
 class ActiveBreaksSettingsAPIView(generics.ListAPIView):
     serializer_class = ActiveBreaksSettingsSerializer
@@ -215,7 +218,7 @@ class ActiveBreaksSettingsAPIView(generics.ListAPIView):
 
 
     
-
+@login_required
 def updateActiveBreaksSettings(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)

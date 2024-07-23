@@ -33,6 +33,7 @@ urlpatterns = [
     #path('api/get-workouts/', views.get_workouts, name="get_workouts"),
 
     path("favicon.ico", RedirectView.as_view(url=staticfiles_storage.url("favicon.ico")),),
+    path('accounts/', include('django.contrib.auth.urls')),
 
     #path('hello-webpack/', TemplateView.as_view(template_name='hello_webpack.html'))
  ]

@@ -5,11 +5,7 @@
 
 <div id="exercises"></div>
 
-<div id="timer-container">
-    <h2 id="timer-title"></h2>
-    <div id="timer"></div>
-    <button id="start-timer" style="display: none;">Start</button>
-</div>
+<button id="submit-reps" style="display:none;">Submit Reps Made</button>
 
 <script>
     $(document).ready(() => {
@@ -45,13 +41,34 @@
                 const exerciseElement = `
                     <div class="exercise">
                         <h3>${exercise.exercise.name}</h3>
-                        <p>${exercise.exercise.instructions}</p>
+                        <div class="dropdown">
+                            <span>Instructions over there!</span>
+                            <div class="dropdown-content">
+                            <p>${exercise.exercise.instructions}</p>
+                            </div>
+                        </div>
                         <p>Reps: ${exercise.repetitions}</p>
-                        <p>Rest: ${exercise.rest_time} seconds</p>
+                        <p>Sets: ${exercise.sets}</p>
+
+                        <p>Reps made: <span class="reps-made" id="reps_made_${index}">0</span></p>
+                        <label for="add_reps_${index}">Add reps</label>
+                        <input type="number" id="add_reps_${index}">
+                        <input type="button" class="btn btn-secondary btn-add_reps" value="Add Reps" data-index="${index}">
                     </div>
                 `;
                 exercisesContainer.append(exerciseElement);
             });
+
+            $(".btn-add_reps").click(function() {
+                const index = $(this).data('index');
+                const repsInput = $(`#add_reps_${index}`);
+                const repsMadeElement = $(`#reps_made_${index}`);
+                const currentReps = parseInt(repsMadeElement.text());
+                const addedReps = parseInt(repsInput.val()) || 0;
+                const newReps = currentReps + addedReps;
+                repsMadeElement.text(newReps);
+                repsInput.val(''); 
+            })
 
             if (exercises.length > 0) {
                 $("#start-timer").show().off('click').on('click', function() {

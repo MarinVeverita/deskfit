@@ -66,10 +66,20 @@ $(document).ready(function() {
 
                     let exerciseElement = `
                         <div class="exercise-item">
-                            <label>
-                                <input type="checkbox" class="exercise-checkbox" value="${exercise.name}">
-                                <strong>${exercise.name}</strong> (${exercise.muscle}-${exercise.difficulty}) 
-                                <p>${exercise.instructions}</p>
+                            <label class="exercise-item-label">
+                                <div class="exercise-main-info">
+                                    <input type="checkbox" class="exercise-checkbox" value="${exercise.name}">
+                                    <strong><span class="exercise-name">${exercise.name}</span></strong>
+                                    <strong><span class="exercise-details">(${exercise.muscle} - ${exercise.difficulty})</span></strong>
+                                </div>
+                                <div class="exercise-instructions">
+                                    <div class="dropdown">
+                                        <span>Instructions over there!</span>
+                                        <div class="dropdown-content">
+                                            <p>${exercise.instructions}</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </label>
                             <div class="exercise-details" style="display:none;">
                                 <label>Sets: <input type="number" class="sets" min="1" value="3"></label>
@@ -79,6 +89,9 @@ $(document).ready(function() {
                             </div>
                         </div>
                     `;
+
+
+
                     outputDiv_exercises.append(exerciseElement);
                 });
 
@@ -117,10 +130,20 @@ $(document).ready(function() {
                                 all_exercises.push(exercise);
                                 let exerciseElement = `
                                     <div class="exercise-item">
-                                        <label>
-                                            <input type="checkbox" class="exercise-checkbox" value="${exercise.name}">
-                                            <strong>${exercise.name}</strong> (${exercise.muscle})
-                                            <p>${exercise.instructions}</p>
+                                        <label class="exercise-item-label">
+                                            <div class="exercise-main-info">
+                                                <input type="checkbox" class="exercise-checkbox" value="${exercise.name}">
+                                                <strong><span class="exercise-name">${exercise.name}</span></strong>
+                                                <strong><span class="exercise-details">(${exercise.muscle} - ${exercise.difficulty})</span></strong>
+                                            </div>
+                                            <div class="exercise-instructions">
+                                                <div class="dropdown">
+                                                    <span>Instructions over there!</span>
+                                                    <div class="dropdown-content">
+                                                        <p>${exercise.instructions}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </label>
                                         <div class="exercise-details" style="display:none;">
                                             <label>Sets: <input type="number" class="sets" min="1" value="3"></label>
@@ -130,6 +153,7 @@ $(document).ready(function() {
                                         </div>
                                     </div>
                                 `;
+
                                 outputDiv_exercises.append(exerciseElement);
                             });
                         },
@@ -153,13 +177,9 @@ $(document).ready(function() {
                         let details;
                         for (let i = 0; i < all_exercises.length; i++) {
                             let exercise = all_exercises[i];
-                            console.log(exercise.name);
-                            console.log($(this).val());
 
                             if (exercise.name == $(this).val()) {
                                 details = exercise;
-                                console.log('knnnnnnnnn')
-                                console.log(details)
                                 break;
                         }
                         
@@ -175,7 +195,6 @@ $(document).ready(function() {
                         });
                     });
 
-                    console.log("Selected Exercises: ", selectedExercises);
 
                     const csrfToken = getCSRFToken();
                     
@@ -190,6 +209,7 @@ $(document).ready(function() {
                         }),
                         success: function(response) {
                             alert("Workout saved successfully!");
+                            window.location.href = "/plan-workout";
                         },
                         error: function(xhr, status, error) {
                             console.error("Errore durante il salvataggio del workout:", error);

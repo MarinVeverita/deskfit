@@ -6,6 +6,7 @@
 <div id="exercises"></div>
 
 <button id="submit-reps" style="display:none;">Submit Reps Made</button>
+<button id="reset-reps" style="display:none;">Reset Reps</button>
 
 <script>
     $(document).ready(() => {
@@ -18,7 +19,6 @@
             url: '/planned_workouts/week-plan',
             type: 'GET',
             success: function(data) {
-                console.log(data)
                 const workoutOfTheDay = data[dayOfWeekString];
                 if (workoutOfTheDay) {
                     $("#message").text(`Today's workout is: ${workoutOfTheDay.name}`);
@@ -37,7 +37,7 @@
             const exercisesContainer = $("#exercises");
             exercisesContainer.empty();
             exercises.forEach((exercise, index) => {
-                console.log(exercise)
+                const savedReps = localStorage.getItem(`reps_made_${index}`) || 0;
                 const exerciseElement = `
                     <div class="exercise">
                         <h3>${exercise.exercise.name}</h3>
@@ -50,7 +50,7 @@
                         <p>Reps: ${exercise.repetitions}</p>
                         <p>Sets: ${exercise.sets}</p>
 
-                        <p>Reps made: <span class="reps-made" id="reps_made_${index}">0</span></p>
+                        <p>Reps made: <span class="reps-made" id="reps_made_${index}">${savedReps}</span></p>
                         <label for="add_reps_${index}">Add reps</label>
                         <input type="number" id="add_reps_${index}">
                         <input type="button" class="btn btn-secondary btn-add_reps" value="Add Reps" data-index="${index}">
@@ -66,55 +66,24 @@
                 const currentReps = parseInt(repsMadeElement.text());
                 const addedReps = parseInt(repsInput.val()) || 0;
                 const newReps = currentReps + addedReps;
+
                 repsMadeElement.text(newReps);
+                localStorage.setItem(`reps_made_${index}`, newReps);
                 repsInput.val(''); 
             })
 
             if (exercises.length > 0) {
-                $("#start-timer").show().off('click').on('click', function() {
-                    startTimer(exercises);
+                $("#reset-reps").show();
+            }
+        
+
+            $("#reset-reps").click(function() {
+                $(".reps-made").text(0);
+                $("input[type='number']").val('');
+                exercises.forEach((exercise, index) => {
+                    localStorage.removeItem(`reps_made_${index}`);
                 });
-            }
-        }
-
-        function startTimer(exercises) {
-            let currentExerciseIndex = 0;
-
-            function startExerciseTimer(duration, name, callback) {
-                let timer = duration, minutes, seconds;
-                $("#timer-title").text(name);
-                const interval = setInterval(function () {
-                    minutes = parseInt(timer / 60, 10);
-                    seconds = parseInt(timer % 60, 10);
-
-                    minutes = minutes < 10 ? "0" + minutes : minutes;
-                    seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                    $("#timer").text(minutes + ":" + seconds);
-
-                    if (--timer < 0) {
-                        clearInterval(interval);
-                        callback();
-                    }
-                }, 1000);
-            }
-
-            function nextExercise() {
-                if (currentExerciseIndex < exercises.length) {
-                    const currentExercise = exercises[currentExerciseIndex];
-                    startExerciseTimer(currentExercise.repetitions, `Exercise: ${currentExercise.exercise.name}`, function() {
-                        startExerciseTimer(currentExercise.rest_time, `Rest for: ${currentExercise.exercise.name}`, function() {
-                            currentExerciseIndex++;
-                            nextExercise();
-                        });
-                    });
-                } else {
-                    $("#timer-title").text("Workout Complete!");
-                    $("#timer").text("");
-                }
-            }
-
-            nextExercise();
+            });
         }
     });
 </script>

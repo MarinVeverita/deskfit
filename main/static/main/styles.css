@@ -340,3 +340,8 @@ input:checked + .slider:before {
     align-items: flex-start;
   }
 }
+
+
+#reset-reps {
+  margin: 10px 0;
+}

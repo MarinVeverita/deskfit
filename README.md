@@ -101,14 +101,14 @@ The application is sufficiently mobile-responsive, allowing users to access and 
       
     - **`templates/`**: Contains all HTML templates used in the app.
       - **`main/`**: Contains templates related to the main functionality of the application.
-        - **`index.html`**: The landing page of the application.
-        - **`timer.html`**: Template for the timer page where the user can view and interact with the active break timer.
-        - **`workout_list.html`**: Lists all workouts created by the user.
-        - **`workout_detail.html`**: Displays details of a specific workout, including exercises and sets.
-        - **`plan_week.html`**: Allows users to drag-and-drop workouts into specific days of the week using `sortable.js`.
+        - **`home.html`**: The landing page of the application.
+        - **`active_breaks.html`**: Template for the timer page where the user can view and interact with the active break timer.
+        - **`plan_workout.html`**: Lists all workouts created by the user and allows users to drag-and-drop workouts into specific days of the week using `sortable.js`.
+        - **`workout_of_the_day.html`**: Displays details of a specific workout, including exercises and sets and gives the ability to cout the reps made.
+         - **`create_workout`**: The page where you create the workouts.
       - **`registration/`**: Contains templates for user authentication.
         - **`login.html`**: Template for user login.
-        - **`signup.html`**: Template for user registration.
+        - **`sign_up.html`**: Template for user registration.
 
     - **`__init__.py`**: Initializes the `main` application as a Python package.
     - **`admin.py`**: Registers models to be managed via Django's admin interface.
